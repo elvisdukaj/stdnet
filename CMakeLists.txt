@@ -13,74 +13,38 @@
 #  limitations under the License.
 
 cmake_minimum_required(VERSION 3.22.1)
-project(stdnet)
+project(STDNET LANGUAGES C CXX VERSION "0.1.0")
 
-add_compile_options(-fsanitize=address -g)
-add_link_options(-fsanitize=address)
+find_package(stdexec REQUIRED CONFIG)
 
-# --- Make Catch2 available ----------------------------------------------------
-include(FetchContent)
+add_library(stdnet INTERFACE)
 
-FetchContent_Declare(
-  Catch2
-  GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-  GIT_TAG        v3.4.0 # or a later release
+target_sources(stdnet INTERFACE FILE_SET HEADERS
+  FILES  
+    include/stdnet/basic_socket.hpp
+    include/stdnet/basic_stream_socket.hpp
+    include/stdnet/buffer.hpp
+    include/stdnet/container.hpp
+    include/stdnet/context_base.hpp
+    include/stdnet/cpo.hpp
+    include/stdnet/endpoint.hpp
+    include/stdnet/internet.hpp
+    include/stdnet/io_base.hpp
+    include/stdnet/io_context_scheduler.hpp
+    include/stdnet/io_context.hpp
+    include/stdnet/libevent_context.hpp
+    include/stdnet/netfwd.hpp
+    include/stdnet/poll_context.hpp
+    include/stdnet/socket_base.hpp
+    include/stdnet/socket.hpp
+    include/stdnet/timer.hpp
+  BASE_DIRS include
 )
 
-FetchContent_MakeAvailable(Catch2)
-include(Catch)
+target_link_libraries(stdnet INTERFACE stdexec::stdexec)
 
-# --- Make stdexec available ---------------------------------------------------
-set(STDEXEC_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-set(STDEXEC_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
-add_subdirectory(stdexec)
-include_directories(stdexec/include)
-
-# --- Make libevent available --------------------------------------------------
-
-add_subdirectory(libevent)
-
-# --- stdnet -------------------------------------------------------------------
-include_directories(include)
-add_compile_options(-Wno-deprecated-declarations)
-set(CMAKE_CXX_STANDARD 23)
-
-list(APPEND stdnet_examples
-    accu-2024
+include(GNUInstallDirs)
+install(
+  TARGETS stdnet
+  FILE_SET HEADERS
 )
-list(APPEND xstdnet_examples
-    overview
-    client
-    simple-http-server
-    server
-    http-server-template
-    accu-client-2024
-)
-foreach(example ${stdnet_examples})
-    add_executable(${example} examples/${example}.cpp)
-    target_link_libraries(${example} STDEXEC::stdexec event_core_shared)
-endforeach()
-
-list (APPEND stdnet_tests
-    buffer
-)
-
-if(${CMAKE_PROJECT_NAME} STREQUAL ${PROJECT_NAME})
-    include(CTest)
-    list(TRANSFORM stdnet_tests PREPEND "test/stdnet/")
-    list(TRANSFORM stdnet_tests APPEND ".cpp")
-
-    add_executable(test_stdnet ${stdnet_tests})
-    set_target_properties(test_stdnet PROPERTIES
-        CXX_STANDARD 20
-        CXX_STANDARD_REQUIRED ON
-        CXX_EXTENSIONS OFF
-    )
-    target_link_libraries(test_stdnet
-        STDEXEC::stdexec
-        event_core_shared
-        Catch2::Catch2WithMain
-    )
-    catch_discover_tests(test_stdnet)
-endif()
