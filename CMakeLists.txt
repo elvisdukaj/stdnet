@@ -16,6 +16,7 @@ cmake_minimum_required(VERSION 3.22.1)
 project(STDNET LANGUAGES C CXX VERSION "0.1.0")
 
 find_package(stdexec REQUIRED CONFIG)
+find_package(Libevent REQUIRED CONFIG)
 
 add_library(stdnet INTERFACE)
 
@@ -41,7 +42,7 @@ target_sources(stdnet INTERFACE FILE_SET HEADERS
   BASE_DIRS include
 )
 
-target_link_libraries(stdnet INTERFACE stdexec::stdexec)
+target_link_libraries(stdnet INTERFACE stdexec::stdexec libevent::libevent)
 
 include(GNUInstallDirs)
 install(

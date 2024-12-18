@@ -62,14 +62,18 @@ using namespace std::string_view_literals;
 
 exec::task<void> make_client(auto& context, std::string url)
 {
+  try {
     using stream_socket = stdnet::basic_stream_socket<stdnet::ip::tcp>;
-    stream_socket client(context, stdnet::ip::tcp::endpoint(stdnet::ip::address_v4::loopback(), 12345));
+    stream_socket client(context, stdnet::ip::tcp::endpoint(stdnet::ip::address_v4::loopback(), 8000));
     co_await stdnet::async_connect(client);
     std::string request("GET / HTTP/1.1\r\n\r\n");
     co_await stdnet::async_send(client, stdnet::buffer(request));
     std::vector<char> b(10000);
     auto n = co_await stdnet::async_receive(client, stdnet::buffer(b));
     std::cout << "received=>>>" << std::string_view(b.data(), n) << "<<<<\n";
+  } catch(const std::exception& exc) {
+    std::cout << "An error occured: " << exc.what() << std::endl;
+  }
 }
 
 int main(int ac, char* av[])

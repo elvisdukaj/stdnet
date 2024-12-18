@@ -20,7 +20,7 @@ class StdnetPackage(ConanFile):
   settings = "os", "arch", "compiler", "build_type"
   
   generators = "CMakeToolchain", "CMakeDeps"
-  requires = "stdexec/0.11.0"
+  requires = "stdexec/0.11.0", "libevent/2.1.12"
 
   def build(self):
     cmake = CMake(self)
@@ -38,4 +38,5 @@ class StdnetPackage(ConanFile):
     self.cpp_info.set_property("cmake_file_name", "stdnet")
     self.cpp_info.set_property("cmake_target_name", "stdnet::stdnet")
     self.cpp_info.requires.append("stdexec::stdexec")
+    self.cpp_info.requires.append("libevent::libevent")
 
