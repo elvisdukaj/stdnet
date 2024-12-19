@@ -64,7 +64,8 @@ exec::task<void> make_client(auto& context, std::string url)
 {
   try {
     using stream_socket = stdnet::basic_stream_socket<stdnet::ip::tcp>;
-    stream_socket client(context, stdnet::ip::tcp::endpoint(stdnet::ip::address_v4::loopback(), 8000));
+    // google.com -> 8e fa 84 c4 -> 172.217.23.206
+    stream_socket client(context, stdnet::ip::tcp::endpoint(stdnet::ip::address_v4{0xac'd9'17'ce}, 80));
     co_await stdnet::async_connect(client);
     std::string request("GET / HTTP/1.1\r\n\r\n");
     co_await stdnet::async_send(client, stdnet::buffer(request));
