@@ -1,5 +1,3 @@
-import os
-
 from conan import ConanFile
 from conan.tools.cmake import CMake, cmake_layout
 from conan.tools.files import copy
@@ -41,7 +39,7 @@ class StdnetPackage(ConanFile):
   def package(self):
     cmake = CMake(self)
     cmake.install()
-    copy(self, "*LICENSE*", src=self.source_folder, dst=os.path.join(self.package_folder))
+    copy(self, "*LICENSE*", src=self.source_folder, dst=self.package_folder)
   
   def package_id(self):
     self.info.clear()
