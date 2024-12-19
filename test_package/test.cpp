@@ -27,24 +27,9 @@
 #include <exec/task.hpp>
 #include <exec/when_any.hpp>
 
-#include <algorithm>
-#include <chrono>
-#include <coroutine>
-#include <cstdint>
-#include <cstddef>
 #include <exception>
-#include <filesystem>
-#include <fstream>
 #include <iostream>
-#include <iterator>
-#include <ranges>
-#include <span>
-#include <sstream>
-#include <stdexcept>
 #include <string>
-#include <string_view>
-#include <unordered_map>
-#include <utility>
 #include <vector>
 
 using namespace std::chrono_literals;
@@ -67,8 +52,10 @@ exec::task<void> make_client(auto& context, std::string url)
     // google.com -> 8e fa 84 c4 -> 172.217.23.206
     stream_socket client(context, stdnet::ip::tcp::endpoint(stdnet::ip::address_v4{0xac'd9'17'ce}, 80));
     co_await stdnet::async_connect(client);
+
     std::string request("GET / HTTP/1.1\r\n\r\n");
     co_await stdnet::async_send(client, stdnet::buffer(request));
+    
     std::vector<char> b(10000);
     auto n = co_await stdnet::async_receive(client, stdnet::buffer(b));
     std::cout << "received=>>>" << std::string_view(b.data(), n) << "<<<<\n";

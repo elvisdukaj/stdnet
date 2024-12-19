@@ -39,3 +39,9 @@ libevent
 openssl
 ssl
 .vscode/settings.json
+
+# build
+build/*
+
+# Conan
+CMakeUserPresets.json
