@@ -47,6 +47,11 @@ class StdnetPackage(ConanFile):
   def package_info(self):
     self.cpp_info.set_property("cmake_file_name", "stdnet")
     self.cpp_info.set_property("cmake_target_name", "stdnet::stdnet")
+
+    self.cpp_info.libdirs = []
+    self.cpp_info.libs = []
+    self.cpp_info.includedirs = ['include']
+
     self.cpp_info.requires.append("stdexec::stdexec")
     self.cpp_info.requires.append("libevent::libevent")
 
