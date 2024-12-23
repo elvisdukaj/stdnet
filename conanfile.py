@@ -25,6 +25,7 @@ class StdnetPackage(ConanFile):
   requires = "stdexec/0.11.0", "libevent/2.1.12"
 
   def layout(self):
+    self.folders.build_folder_vars = [                                                                "settings.os",                                                                                "settings.arch",                                                                              "settings.compiler",                                                                          "settings.compiler.version"                                                               ]
     cmake_layout(self)
 
   def validate(self):
